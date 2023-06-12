@@ -1,0 +1,35 @@
+name: "Action Helm Diff"
+description: "Preview the helm upgrade command"
+inputs:
+  release_name:
+    description: "Release name"
+    required: true
+    default: ""
+  chart_directory:
+    description: "Chart directory"
+    required: false
+    default: "."
+  values_file:
+    description: "Values file"
+    required: false
+    default: "values.yaml"
+  namespace:
+    description: "Namespace"
+    required: false
+    default: "default"
+  args:
+    description: "Args"
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - run: helm plugin install https://github.com/databus23/helm-diff
+      shell: bash
+    - run: |
+        helm diff upgrade ${{ inputs.release_name }} ${{ inputs.chart_directory }} \
+        --values ${{ inputs.values_file }} \
+        --namespace ${{ inputs.namespace }} \
+        ${{ inputs.args }}
+      shell: bash
+
